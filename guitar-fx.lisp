@@ -146,7 +146,7 @@
 
 ;;;;
 
-(defsynth random-fm ()
+(defsynth random-fm ((amp .3))
   (let ((input (in.ar (getf *in-bus* :pre))))
     (out.ar 0
 	    (pan2.ar (* (+ (sin-osc.ar (tartini.kr input) 0 .2)
@@ -157,13 +157,13 @@
 						 20 10000))
 				       0 .2))
 			(max 0 (- .15 (amplitude.kr input :mul 10)))
-			.35)))))
+			.35 amp)))))
 
 (make-toggle random-fm)
 
 ;;;;
 
-(defsynth onsets ((notes '(43 44 50 51 53 55 62 63 65 67 68 76 78)))
+(defsynth onsets ((notes '(43 44 50 51 53 55 62 63 65 67 68 76 78)) (amp .25))
   (let* ((in (in.ar (getf *in-bus* :pre)))
 	 (trig (coyote.kr in 0.2 0.2 0.01 0.8 0.05 0.1)))
     (out.ar 0 (pan2.ar (leak-dc.ar
@@ -181,7 +181,8 @@
 			      (bpf.ar (white-noise.ar 0.3)
 				      (+ 100 (demand.kr trig 1 (d-white 200 2000)))
 				      (+ .1 (demand.kr trig 1 (d-white .1 2)))
-				      ))))
+				      ))
+			   amp))
 		       (lf-noise1.kr 5 2 -1)))))
 
 (make-toggle onsets)
