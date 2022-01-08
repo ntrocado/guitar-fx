@@ -212,7 +212,7 @@
 	 (ptr (phasor.ar rec 1 0 dur))
 	 (play (* (- 1 (var-lag.kr rec .5))
 		  (buf-rd.ar 1 buf (wrap.ar (* ptr (+ 1 (* .05 (in.kr *ctrl-bus*)
-							   (lf-noise1.kr 2 1 .5))))
+							   (lf-noise1.kr 2 .45 .5))))
 					    0 dur)))))
     
     (buf-wr.ar (x-fade2.ar (* in
