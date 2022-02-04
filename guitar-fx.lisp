@@ -3,6 +3,7 @@
 (defparameter *input-mic* 0)
 (defparameter *input-pre* 1)
 (defparameter *input-post* 4)
+(defparameter *output-bus* 4)
 
 (defparameter *nodes* (make-hash-table))
 
@@ -87,7 +88,7 @@
 (defparameter *ctrl-node* (synth 'ctrl-bus :to *aux-group*))
 
 (defsynth sin-test ((in *ctrl-bus*))
-  (out.ar 0 (sin-osc.ar (+ 300 (* 200 (in.kr in))) 0 0.1)))
+  (out.ar *output-bus* (sin-osc.ar (+ 300 (* 200 (in.kr in))) 0 0.1)))
 
 (sc-osc:add-osc-responder
  *osc*
@@ -132,7 +133,7 @@
 	 (car (sin-osc-fb.ar (+ freq mod)
 			     (range (lf-noise1.kr (lf-noise1.kr '(.4 .23 .69) .5 .8))
 				    (* .2 pi) (* .9 pi)))))
-    (out.ar 0 (splay.ar (decimator.ar (rlpf.ar car (range (lf-noise0.kr (lin-lin.kr control 0 1 .5 2)) 1600 5000))
+    (out.ar *output-bus* (splay.ar (decimator.ar (rlpf.ar car (range (lf-noise0.kr (lin-lin.kr control 0 1 .5 2)) 1600 5000))
 				      (+ (range (lin-lin.kr control 0 1 44100 8000))
 					 (lf-noise1.kr (lin-lin.kr control 0 1 .2 .7)
 						       (lin-exp.kr control 0 1 0.001 1500)))
@@ -146,9 +147,9 @@
 
 ;;;;
 
-(defsynth random-fm ((amp .3))
+(defsynth random-fm ((amp .7))
   (let ((input (in.ar (getf *in-bus* :pre))))
-    (out.ar 0
+    (out.ar *output-bus*
 	    (pan2.ar (* (+ (sin-osc.ar (tartini.kr input) 0 .2)
 			   (sin-osc.ar (* (amplitude.kr input
 							:mul 2000
@@ -163,7 +164,7 @@
 
 ;;;;
 
-(defsynth onsets ((notes '(43 44 50 51 53 55 62 63 65 67 68 76 78)) (amp .25))
+(defsynth onsets ((notes '(43 44 50 51 53 55 62 63 65 67 68 76 78)) (amp .7))
   (let* ((in (in.ar (getf *in-bus* :pre)))
 	 (trig (coyote.kr in 0.2 0.2 0.01 0.8 0.05 0.1)))
     (out.ar 0 (pan2.ar (leak-dc.ar
@@ -194,11 +195,12 @@
 
 (defsynth zigzag ()
   (record-buf.ar (in.ar (getf *in-bus* :post)) *buf*)
-  (out.ar 0 
+  (out.ar *output-bus* 
 	  (splay.ar (buf-rd.ar 1 *buf* (phasor.ar 1
 						  (lf-noise1.kr .2 1 '(1.5 1.9 -1.5))
 						  0
-						  (buf-frames.ir *buf*))))))
+						  (buf-frames.ir *buf*)))
+		    1 .1)))
 
 (make-toggle zigzag)
 
@@ -222,7 +224,7 @@
 			   play
 			   (var-lag.kr (- 1 (* 2 rec)) .03))
 	       buf ptr)
-    (out.ar 0 (pan2.ar (* play
+    (out.ar *output-bus* (pan2.ar (* play
 			  (env-gen.kr (asr .01 1 .7)
 				      :gate (- 1 (* (delay-1.kr (< dur (* (sample-rate.ir) .25))) (- 1 rec)))
 				      :act :free))
@@ -267,7 +269,7 @@
 	 (position (+ (* (buf-dur.kr buffer) pos)
 		      (t-rand.kr 0 0.01 clk)))
 	 (pan (lf-noise1.kr 10 2 -1)))
-    (out.ar 0 (* (tgrains.ar 2 clk buffer 1 position dur pan 0.5)
+    (out.ar *output-bus* (* (tgrains.ar 2 clk buffer 1 position dur pan 0.5)
 		 (env-gen.ar (asr 1) :gate gate :act :free)
 		 amp))))
 
@@ -282,3 +284,4 @@
        (ctrl node :amp y)))))
 
 (make-toggle grains :gate-p t)
+
