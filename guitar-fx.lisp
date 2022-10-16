@@ -197,10 +197,11 @@
   (record-buf.ar (in.ar (getf *in-bus* :post)) *buf*)
   (out.ar *output-bus* 
 	  (splay.ar (buf-rd.ar 1 *buf* (phasor.ar 1
-						  (lf-noise1.kr .2 1 '(1.5 1.9 -1.5))
+						  (lf-noise1.kr .2 1 (mapcar (lambda (x) (* x (+ (in.kr *ctrl-bus*) .5) 2))
+													     '(1.5 1.9 -1.5 1.1 -.7 .2)))
 						  0
 						  (buf-frames.ir *buf*)))
-		    1 .1)))
+		    1 1)))
 
 (make-toggle zigzag)
 
