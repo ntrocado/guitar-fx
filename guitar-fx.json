@@ -1,6 +1,6 @@
 {
   "createdWith": "Open Stage Control",
-  "version": "1.11.1",
+  "version": "1.16.6",
   "type": "session",
   "content": {
     "type": "root",
@@ -36,7 +36,6 @@
     "target": "",
     "ignoreDefaults": false,
     "bypass": false,
-    "script": "",
     "widgets": [
       {
         "type": "button",
@@ -78,7 +77,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "button",
@@ -120,7 +121,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "button",
@@ -162,7 +165,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "button",
@@ -204,7 +209,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "button",
@@ -246,7 +253,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "button",
@@ -288,7 +297,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "fader",
@@ -339,7 +350,10 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": "",
+        "onTouch": ""
       },
       {
         "type": "xy",
@@ -390,7 +404,10 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": "",
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -432,7 +449,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "button",
@@ -474,7 +493,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "input",
@@ -513,7 +534,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "input",
@@ -552,7 +575,9 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "text",
@@ -585,7 +610,9 @@
         "preArgs": "",
         "decimals": 2,
         "target": "",
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       },
       {
         "type": "text",
@@ -618,9 +645,15 @@
         "preArgs": "",
         "decimals": 2,
         "target": "",
-        "script": ""
+        "onValue": "",
+        "lock": false,
+        "onCreate": ""
       }
     ],
-    "tabs": []
+    "tabs": [],
+    "onValue": "",
+    "lock": false,
+    "hideMenu": false,
+    "onCreate": ""
   }
 }
