@@ -270,7 +270,7 @@
 	 (position (+ (* (buf-dur.kr buffer) pos)
 		      (t-rand.kr 0 0.01 clk)))
 	 (pan (lf-noise1.kr 10 2 -1)))
-    (out.ar *output-bus* (* (tgrains.ar 2 clk buffer 1 position dur pan 0.5)
+    (out.ar *output-bus* (* (tgrains.ar 4 clk buffer 1 position dur pan 0.5)
 		 (env-gen.ar (asr 1) :gate gate :act :free)
 		 amp))))
 
