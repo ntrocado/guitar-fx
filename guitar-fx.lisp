@@ -290,6 +290,23 @@
 
 (record-on)
 
+;;; Pre-recorded samples
+
+(defun load-sample (n &optional (buffer *rec*))
+  (ecase n
+    (0 (buffer-read-channel "~/Desktop/estudo1.wav"
+			    :channels 0 :bufnum (bufnum buffer))))
+  (update-sample-plot buffer))
+
+(sc-osc:add-osc-responder
+    *osc*
+    "/load_sample"
+    (lambda (&rest param)
+      (let ((value (car param)))
+	(if (integerp value)
+	    (load-sample value)
+	    (warn "load_sample received with ~a instead of integer." value)))))
+
 ;;; Grains
 
 (defsynth grains ((buffer *rec*) (rate 32) (pos .5) (amp 1.0) (gate 1))
