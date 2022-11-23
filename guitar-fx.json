@@ -1,6 +1,6 @@
 {
   "createdWith": "Open Stage Control",
-  "version": "1.16.6",
+  "version": "1.20.0",
   "type": "session",
   "content": {
     "type": "root",
@@ -69,7 +69,7 @@
         "doubleTap": false,
         "value": "",
         "default": "",
-        "linkId": "",
+        "linkId": "<<allButtons",
         "address": "auto",
         "preArgs": "",
         "typeTags": "",
@@ -79,7 +79,9 @@
         "bypass": false,
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false
       },
       {
         "type": "button",
@@ -113,7 +115,7 @@
         "doubleTap": false,
         "value": "",
         "default": "",
-        "linkId": "",
+        "linkId": "<<allButtons",
         "address": "auto",
         "preArgs": "",
         "typeTags": "",
@@ -123,7 +125,9 @@
         "bypass": false,
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false
       },
       {
         "type": "button",
@@ -157,7 +161,7 @@
         "doubleTap": false,
         "value": "",
         "default": "",
-        "linkId": "",
+        "linkId": "<<allButtons",
         "address": "auto",
         "preArgs": "",
         "typeTags": "",
@@ -167,7 +171,9 @@
         "bypass": false,
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false
       },
       {
         "type": "button",
@@ -201,7 +207,7 @@
         "doubleTap": false,
         "value": "",
         "default": "",
-        "linkId": "",
+        "linkId": "<<allButtons",
         "address": "/LOOP",
         "preArgs": "",
         "typeTags": "",
@@ -211,7 +217,9 @@
         "bypass": false,
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false
       },
       {
         "type": "button",
@@ -245,7 +253,7 @@
         "doubleTap": false,
         "value": "",
         "default": "",
-        "linkId": "",
+        "linkId": "<<allButtons",
         "address": "auto",
         "preArgs": "",
         "typeTags": "",
@@ -255,7 +263,9 @@
         "bypass": false,
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false
       },
       {
         "type": "button",
@@ -283,13 +293,13 @@
         "label": "auto",
         "vertical": false,
         "wrap": false,
-        "on": 1,
+        "on": 0,
         "off": 0,
         "mode": "tap",
         "doubleTap": false,
         "value": "",
         "default": "",
-        "linkId": "",
+        "linkId": ">>allButtons",
         "address": "auto",
         "preArgs": "",
         "typeTags": "",
@@ -299,7 +309,9 @@
         "bypass": false,
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false
       },
       {
         "type": "fader",
@@ -353,7 +365,8 @@
         "onValue": "",
         "lock": false,
         "onCreate": "",
-        "onTouch": ""
+        "onTouch": "",
+        "borderRadius": "auto"
       },
       {
         "type": "xy",
@@ -379,8 +392,8 @@
         "css": "",
         "pointSize": 20,
         "ephemeral": false,
-        "pips": true,
-        "snap": false,
+        "pips": false,
+        "snap": true,
         "spring": false,
         "rangeX": {
           "min": 0,
@@ -407,7 +420,8 @@
         "onValue": "",
         "lock": false,
         "onCreate": "",
-        "onTouch": ""
+        "onTouch": "",
+        "borderRadius": "auto"
       },
       {
         "type": "button",
@@ -441,7 +455,7 @@
         "doubleTap": false,
         "value": "",
         "default": 1,
-        "linkId": "",
+        "linkId": "<<allButtons",
         "address": "/RECORD",
         "preArgs": "",
         "typeTags": "",
@@ -449,9 +463,11 @@
         "target": "",
         "ignoreDefaults": false,
         "bypass": false,
-        "onValue": "",
+        "onValue": "if (value === 0) {\n  send('/sample_redraw', 1)\n}",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false
       },
       {
         "type": "button",
@@ -485,7 +501,7 @@
         "doubleTap": false,
         "value": "",
         "default": "",
-        "linkId": "",
+        "linkId": "<<allButtons",
         "address": "auto",
         "preArgs": "",
         "typeTags": "",
@@ -495,7 +511,9 @@
         "bypass": false,
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false
       },
       {
         "type": "input",
@@ -536,7 +554,9 @@
         "bypass": false,
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "maxLength": ""
       },
       {
         "type": "input",
@@ -577,7 +597,9 @@
         "bypass": false,
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto",
+        "maxLength": ""
       },
       {
         "type": "text",
@@ -612,7 +634,8 @@
         "target": "",
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto"
       },
       {
         "type": "text",
@@ -647,13 +670,59 @@
         "target": "",
         "onValue": "",
         "lock": false,
-        "onCreate": ""
+        "onCreate": "",
+        "borderRadius": "auto"
+      },
+      {
+        "type": "plot",
+        "top": 240,
+        "left": 20,
+        "lock": false,
+        "id": "sample_plot",
+        "visible": true,
+        "comments": "",
+        "width": 560,
+        "height": 240,
+        "expand": "false",
+        "colorText": "auto",
+        "colorWidget": "auto",
+        "colorStroke": "auto",
+        "colorFill": "auto",
+        "alphaStroke": "auto",
+        "alphaFillOff": "auto",
+        "alphaFillOn": "auto",
+        "lineWidth": "auto",
+        "borderRadius": "auto",
+        "padding": "auto",
+        "html": "",
+        "css": "",
+        "dots": false,
+        "bars": false,
+        "pips": false,
+        "rangeX": {
+          "min": 0,
+          "max": 1
+        },
+        "rangeY": {
+          "min": -1,
+          "max": 1
+        },
+        "origin": true,
+        "value": "",
+        "default": "",
+        "linkId": "",
+        "address": "auto",
+        "preArgs": "",
+        "target": "",
+        "onCreate": "",
+        "onValue": ""
       }
     ],
     "tabs": [],
     "onValue": "",
     "lock": false,
     "hideMenu": false,
-    "onCreate": ""
+    "onCreate": "",
+    "borderRadius": "auto"
   }
 }

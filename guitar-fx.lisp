@@ -51,6 +51,20 @@
 		     #',stop-fun
 		     #',toggle-fun)))))
 
+;;; OSC transmit
+
+(defparameter *osc-send-port* 8088)
+
+(defun sequence->osc-string (seq)
+  (format nil "[~{~a~^, ~}]" (coerce seq 'list)))
+
+(defun send-osc-message (target message &key (port *osc-send-port*))
+  (sc-osc:send-message (sc-osc:osc-device #(127 0 0 1) port)
+		       target
+		       (if (typep message 'sequence)
+			   (sequence->osc-string message)
+			   message)))
+
 ;;;;
 
 (defparameter *aux-group* (make-group :pos :before))
@@ -253,6 +267,22 @@
 (defparameter *rec*
   (buffer-alloc (* 4 (sc::server-options-hardware-samplerate (server-options *s*)))))
 
+(defun update-sample-plot (buf)
+  (let ((buffer-len (frames buf))
+	(frames (buffer-to-array buf :channels 0)))
+    (loop :with vec := (make-array 500)
+	  :for i :from 0 :below buffer-len :by (ceiling (/ buffer-len 500))
+	  :for j :from 0
+	  :do (setf (aref vec j) (aref frames i))
+	  :finally (send-osc-message "/sample_plot" vec))))
+
+(sc-osc:add-osc-responder
+    *osc*
+    "/sample_redraw"
+    (lambda (&rest param)
+      (declare (ignore param))
+      (update-sample-plot *rec*)))
+
 (defsynth record ((buffer *rec*))
   (record-buf.ar (in.ar (getf *in-bus* :post)) buffer))
 
@@ -285,4 +315,3 @@
        (ctrl node :amp y)))))
 
 (make-toggle grains :gate-p t)
-
