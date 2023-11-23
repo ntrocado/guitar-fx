@@ -331,3 +331,155 @@
        (ctrl node :amp y)))))
 
 (make-toggle grains :gate-p t)
+
+
+;;;;
+
+(defsynth hit ((buffer *rec*))
+  (out.ar *output-bus*
+	  (pan2.ar (* (env-gen.kr (perc 0.001 (t-rand.kr .1 .7 1) 1.7) :act :free)
+		      (play-buf.ar 1 buffer 1
+				   :start-pos (t-rand.kr 0 (buf-frames.ir buffer) 1)))
+		   (t-rand.kr -.5 .5 1))))
+
+(make-toggle hit)
+
+
+(defsynth fm ((freq 500) (m-ratio 1) (c-ratio 1) (index 1) (i-scale 5)
+	      (amp .2) (atk .01) (rel 3) (c-atk 4) (c-rel -4) (pan 0)
+	      (reverb 0))
+  (let* ((ienv (env-gen.kr (env (list index (* index i-scale) index)
+				(list atk rel)
+				(list c-atk c-rel))))
+	 (env (env-gen.kr (perc atk rel 1 (list c-atk c-rel))))
+	 (mod (sin-osc.ar (* freq m-ratio) 0 (* freq m-ratio ienv)))
+	 (car (* (sin-osc.ar (+ (* freq c-ratio)
+				mod))
+		 env amp))
+	 (sig (apply #'freeverb2.ar (append (pan2.ar car pan)
+					    (list :mix reverb)))))
+    (detect-silence.ar sig 1.0e-4 :act :free)
+    (out.ar *output-bus* sig)))
+
+(sc-osc:add-osc-responder *osc* "/fm"
+    (lambda (&rest param)
+      (declare (ignore param))
+      (synth 'fm
+	     :freq (midicps 72)
+	     :m-ratio (util:rrand .95 80)
+	     :c-ratio (util:rrand 1.2 45)
+	     :index 1.2
+	     :i-scale (util:rrand 1.4 10)
+	     :amp (util:rrand .03 .09)
+	     :pan (util:rrand -.7 .7)
+	     :rel (util:exp-rrand .015 1.2)
+	     :reverb (util:rrand .1 .6))))
+
+
+;;; Mag noise
+
+(defsynth mag-noise ((buffer *rec*) (w1 12) (w2 10))
+  (let ((window1 (expt 2 w1))
+	(window2 (expt 2 w2)))
+    (out.ar *output-bus* (pan2.ar (ifft.ar (pv-mag-noise (fft (local-buf (list window1 window2))
+							      (play-buf.ar 1 buffer .75 :loop 1))))))))
+
+(make-toggle mag-noise)
+
+
+;;; Harmonizer
+
+(defun progressive-harmonics (ctrl chord)
+  (let ((len (truncate (lin-lin ctrl 0 1 1 (length chord)))))
+    (subseq chord 0 len)))
+
+;; 0 → 1
+;; 1 → '(1/2 4/5 1 6/5 11/7 17/9 23/11)
+
+(defsynth harmonizer ((in *output-bus*) (out *output-bus*) (ctrl *ctrl-bus*))
+  (replace-out.ar out
+		  (splay.ar (pitch-shift.ar (in.ar in)
+					    .2
+					    (mapcar (lambda (x)
+						      (* x (range (in.kr ctrl)
+								  .5 1)))
+						    '(.68 .83 1 1.17 1.55 1.89 2.15))))))
+
+;; (proxy :harm
+;;        (replace-out.ar *output-bus*
+;; 		  (splay.ar (pitch-shift.ar (in.ar *output-bus*)
+;; 					    .2
+;; 					    (mapcar (lambda (x)
+;; 						      (* x (range (in.kr *ctrl-bus*)
+;; 								  .5 1)))
+;; 						    '(.68 .83 1 1.17 1.55 1.89 2.15)))))
+;;        :pos :tail)
+;;;;
+
+;;;
+
+(defsynth osc-synth (freq amp pan (curve -11) (out *output-bus*))
+  (out.ar out (* (env-gen.ar (perc .01 2 1 curve) :act :free)
+		 (pan2.ar (sin-osc.ar freq 0 amp)
+			  pan))))
+
+(defsynth planta ((amp .3) pan (gate 1) (out *output-bus*))
+  (out.ar out (* (env-gen.ar (asr .001 amp 1) :gate gate :act :free)
+		 (let ((trig (dust.kr (env-gen.ar (env '(10 .1 10) '(.1 10))))))
+		  (hpf.ar (sos.ar (env-gen.ar (perc) :gate trig)
+				  0 2 0 (demand.kr trig 1 (d-white 1.45 1.6))
+				  '(-0.9995 -0.9995))
+			  1000)))))
+
+(defun decay+tremolo-env (&optional (repeats 30))
+  (let ((levels (append '(0 1 0)
+			(loop :for l :from 0 :upto 1 :by (/ 1 repeats)
+			      :append (list (lin-exp l 0 1 0.001 .9) 0))))
+	(times (append '(.001 .3)
+		       (loop :repeat (1+ repeats) :append (list .007 .072)))))
+    (env levels times :sine)))
+
+(defsynth glitch-osc-synth (freq amp pan (out *output-bus*))
+  (out.ar out (freeverb.ar (* (env-gen.ar (decay+tremolo-env) :level-scale 1.5)
+			      (pan2.ar (sin-osc.ar freq 0 amp)
+				       (range (lf-tri.kr .3) -1 1)
+				       pan))
+			   :mix (x-line.kr .1 .7 4 :act :free))))
+
+(defparameter *microscale* '(60 62 64 65.5 67 68.5 69.5 71))
+
+(defun microtonal ()
+  (synth 'osc-synth
+	 :freq (midicps (a:random-elt
+			 (loop :for octave :upto 2
+			       :append (mapcar (lambda (x)
+						 (+ x (* 12 octave)))
+					       *microscale*))))
+	 :amp (util:rrand .02 .13)
+	 :pan (util:rrand -.9 .9)
+	 :curve (util:rrand -16 -7)))
+
+(defun microtonal-glitch ()
+  (synth 'glitch-osc-synth
+	 :freq (midicps (a:random-elt
+			 (loop :for octave :upto 2
+			       :append (mapcar (lambda (x)
+						 (+ x (* 12 octave)))
+					       *microscale*))))
+	 :amp (util:rrand .1 .2)
+	 :pan (util:rrand -.8 .8)
+	 :repeats (util:rrand 10 20)))
+
+(sc-osc:add-osc-responder *osc* "/microtonal"
+    (lambda (&rest param)
+      (declare (ignore param))
+      (microtonal)))
+
+(sc-osc:add-osc-responder *osc* "/microtonal-glitch"
+    (lambda (&rest param)
+      (declare (ignore param))
+      (microtonal-glitch)))
+
+(defun gui () ;; Does not work
+  (uiop:launch-program "c:/Programas/Open-stage-control/open-stage-control.exe -- --send localhost:8000 --load c:/Users/trocado/OneDrive/Documents/Lisp/cl-collider/guitar-fx/guitar-fx.json --custom-module C:\Users\trocado\OneDrive\Documents\Lisp\cl-collider\guitar-fx\midi-osc.js --osc-port 8088"
+		       :output *standard-output* :error-output *standard-output*))
