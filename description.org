@@ -1,0 +1,24 @@
+[[file:screenshot.png]]
+
+[[https://supercollider.github.io/][Supercollider]] audio server ↔ Lisp program ↔ [[http://openstagecontrol.ammd.net/][Open Stage Control]] interface
+See [[https://nunotrocado.com/software/cl-collider-tutorial-1.html][this tutorial]] for how I use Supercollider with Lisp.
+
+The user interface is designed for touch screen. All buttons and the vertical fader can also be controlled with a midi pedalboard.
+
+- REC :: records sound input to a buffer
+- GRAINS :: activate the XY pad for granular synthesis
+- HIT :: plays random percussive bits from the recorded audio
+- LOOP :: glitch looper; hold to rec, tap to play, double tap to reset; the audio is transformed each time it loops
+- STOP :: quick fade out of everything playing
+- FEEDBACK FM :: tracks input pitch to drive an fm synth; gets chaotic
+- RANDOM FM :: fm noises that react to the input amplitude (in inverse, loud input → no noise; silence → lots of noise)
+- ONSETS :: detects input onsets in real time and plays short harsh synth sounds 
+- ZIGZAG :: modulates playhead speed and direction
+- Pre, Post, Guitar, Mic :: select audio interface active inputs for recording and real time processing
+- MAG NOISE :: frequency-domain processing of the buffer, multiplying bin magnitudes by noise
+- μ1, μ2, μ!, fm :: percussive one-shot synth sounds
+- 1, 2, 3 :: loads pre-recorded audio files into the buffer
+- "s -gear" :: opens the ui for the amp modeler, which is running as a vst in the background
+- large vertical fader :: simultaneously controls a number of parameters in all of the effects/modules
+- rectangular XY pad on the left :: shows a waveform for the present audio buffer, and controls the position (X) and amplitude (Y) of the granular synthesis module
+- large XY pad on the right :: plots a corpus of small sound bits, segmented and analyzed with the flucoma library (following [[https://learn.flucoma.org/learn/2d-corpus-explorer/][this technique]]); touching triggers the nearest individual sound segment
