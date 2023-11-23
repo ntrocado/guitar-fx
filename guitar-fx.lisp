@@ -56,7 +56,7 @@
 (defparameter *osc-send-port* 8088)
 
 (defun sequence->osc-string (seq)
-  (format nil "[~{~a~^, ~}]" (coerce seq 'list)))
+  (format nil "[~{~,4f~^, ~}]" (coerce seq 'list)))
 
 (defun send-osc-message (target message &key (port *osc-send-port*))
   (sc-osc:send-message (sc-osc:osc-device #(127 0 0 1) port)
