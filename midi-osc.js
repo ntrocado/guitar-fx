@@ -10,6 +10,7 @@ var onoff = {
     2: '/RANDOM-FM',
     3: '/ONSETS',
     4: '/ZIGZAG',
+    5: '/HIT',
     6: '/RECORD',
     7: '/GRAINS',
     9: '/LOOP',
