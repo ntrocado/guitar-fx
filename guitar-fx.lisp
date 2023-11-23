@@ -129,7 +129,7 @@
 
 ;;;;
 
-(defsynth feedback-fm ((amp .6))
+(defsynth feedback-fm ((amp 1))
   (let* ((control (in.kr *ctrl-bus*))
 	 (in-freq (first (tartini.kr (in.ar (getf *in-bus* :pre)))))
 	 (max-speed (range (lf-noise1.kr 1) 2 8))
