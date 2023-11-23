@@ -216,7 +216,7 @@
 													     '(1.5 1.9 -1.5 1.1 -.7 .2)))
 						  0
 						  (buf-frames.ir *buf*)))
-		    1 1)))
+		    1 .4)))
 
 (make-toggle zigzag)
 
