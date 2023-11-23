@@ -1,9 +1,1 @@
-# Guitar-FX
-### _Nuno Trocado_
-
-This is a project to do ... something.
-
-## License
-
-Specify license here
-
+This is what I've been using for live improvisation. Allows the processing of the guitar signal, as well as manipulating in real time the sound of the rest of the musicians. Many parameters are adjusted specifically according to band/project.
