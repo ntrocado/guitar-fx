@@ -1,6 +1,7 @@
 [[file:screenshot.png]]
 
 [[https://supercollider.github.io/][Supercollider]] audio server ↔ Lisp program ↔ [[http://openstagecontrol.ammd.net/][Open Stage Control]] interface
+
 See [[https://nunotrocado.com/software/cl-collider-tutorial-1.html][this tutorial]] for how I use Supercollider with Lisp.
 
 The user interface is designed for touch screen. All buttons and the vertical fader can also be controlled with a midi pedalboard.
