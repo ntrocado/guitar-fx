@@ -289,8 +289,6 @@
 
 (make-toggle record)
 
-(record-on)
-
 ;;; Pre-recorded samples
 
 (defun load-sample (n &optional (buffer *rec*))
