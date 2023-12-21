@@ -129,7 +129,7 @@
 
 ;;;;
 
-(defsynth feedback-fm ((amp 1))
+(defsynth feedback-fm ((amp .6))
   (let* ((control (in.kr *ctrl-bus*))
 	 (in-freq (first (tartini.kr (in.ar (getf *in-bus* :pre)))))
 	 (max-speed (range (lf-noise1.kr 1) 2 8))
@@ -182,7 +182,7 @@
 (defsynth onsets ((notes '(43 44 50 51 53 55 62 63 65 67 68 76 78)) (amp .7))
   (let* ((in (in.ar (getf *in-bus* :pre)))
 	 (trig (coyote.kr in 0.2 0.2 0.01 0.8 0.05 0.1)))
-    (out.ar 0 (pan2.ar (leak-dc.ar
+    (out.ar *output-bus* (pan2.ar (leak-dc.ar
 			(* (env-gen.ar (perc 0.0001
 					     (demand.kr trig 0 (d-rand '(.05 .07 .09 .2 1)
 								       +inf+))
