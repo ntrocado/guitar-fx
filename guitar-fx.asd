@@ -1,14 +1,13 @@
-;;;; Guitar-FX.asd
-
-(asdf:defsystem #:Guitar-fx
-  :description "Guitar + live electronics setup."
+(asdf:defsystem #:guitar-fx
+  :description "Guitar + live-electronics setup."
   :author "Nuno Trocado"
-  :license  "Specify license here"
-  :version "0.0.1"
+  :license  "MIT"
+  :version "1.0"
   :serial t
-  :depends-on (#:alexandria #:sc-setup #:sc-vst #:kdtree-jk)
+  :depends-on (#:alexandria #:sc-vst #:kdtree-jk)
   :components ((:file "package")
-               (:file "guitar-fx")
+	       (:file "util")
+	       (:file "setup")
+	       (:file "guitar-fx")
 	       (:file "corpus")
-	       ;; (:file "vst")
-	       ))
+	       (:file "vst")))

@@ -366,14 +366,14 @@
       (declare (ignore param))
       (synth 'fm
 	     :freq (midicps 72)
-	     :m-ratio (util:rrand .95 80)
-	     :c-ratio (util:rrand 1.2 45)
+	     :m-ratio (rrand .95 80)
+	     :c-ratio (rrand 1.2 45)
 	     :index 1.2
-	     :i-scale (util:rrand 1.4 10)
-	     :amp (util:rrand .03 .09)
-	     :pan (util:rrand -.7 .7)
-	     :rel (util:exp-rrand .015 1.2)
-	     :reverb (util:rrand .1 .6))))
+	     :i-scale (rrand 1.4 10)
+	     :amp (rrand .03 .09)
+	     :pan (rrand -.7 .7)
+	     :rel (exp-rrand .015 1.2)
+	     :reverb (rrand .1 .6))))
 
 
 ;;; Mag noise
@@ -455,9 +455,9 @@
 			       :append (mapcar (lambda (x)
 						 (+ x (* 12 octave)))
 					       *microscale*))))
-	 :amp (util:rrand .02 .13)
-	 :pan (util:rrand -.9 .9)
-	 :curve (util:rrand -16 -7)))
+	 :amp (rrand .02 .13)
+	 :pan (rrand -.9 .9)
+	 :curve (rrand -16 -7)))
 
 (defun microtonal-glitch ()
   (synth 'glitch-osc-synth
@@ -466,9 +466,9 @@
 			       :append (mapcar (lambda (x)
 						 (+ x (* 12 octave)))
 					       *microscale*))))
-	 :amp (util:rrand .1 .2)
-	 :pan (util:rrand -.8 .8)
-	 :repeats (util:rrand 10 20)))
+	 :amp (rrand .1 .2)
+	 :pan (rrand -.8 .8)
+	 :repeats (rrand 10 20)))
 
 (sc-osc:add-osc-responder *osc* "/microtonal"
     (lambda (&rest param)
