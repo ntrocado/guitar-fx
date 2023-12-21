@@ -10,4 +10,6 @@
 	       (:file "setup")
 	       (:file "guitar-fx")
 	       (:file "corpus")
-	       (:file "vst")))
+	       ;; vst works, but for the moment I'd rather use the amp modeller as a standalone
+	       ;; (:file "vst")
+	       ))
