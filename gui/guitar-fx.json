@@ -115,7 +115,7 @@
         "ephemeral": true,
         "pips": false,
         "snap": true,
-        "spring": true,
+        "spring": false,
         "rangeX": {
           "min": 0,
           "max": 1
