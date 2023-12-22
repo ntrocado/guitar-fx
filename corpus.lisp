@@ -78,14 +78,18 @@
   (destructuring-bind (src slices)
       (uiop:with-safe-io-syntax (:package :guitar-fx)
 	(uiop:read-file-forms path))
-    (setf *src* (buffer-read-channel src :channels 0)
+    (setf *src* (buffer-read-channel (corpus-relative-pathname src) :channels 0)
 	  *slices* slices
 	  *kd* (fill-kdtree *slices*))
     (populate-canvas)))
 
+(defun corpus-relative-pathname (file)
+  (asdf:system-relative-pathname "guitar-fx"
+				 (merge-pathnames file #p"corpus/")))
+
 (sc-osc:add-osc-responder *osc* "/load_analysis"
     (lambda (&rest param)
       (ecase (truncate (car param))
-	(1 (load-analysis #p"~/OneDrive/Documents/Lisp/cl-collider/flucoma/example-analysis"))
-	(2 (load-analysis #p"~/OneDrive/Documents/Lisp/cl-collider/flucoma/bm-analysis"))
-	(3 (load-analysis #p"~/OneDrive/Documents/Lisp/cl-collider/guitar-fx/vilnius-analysis")))))
+	(1 (load-analysis (corpus-relative-pathname "example-analysis")))
+	(2 (load-analysis (corpus-relative-pathname "bm-analysis")))
+	(3 (load-analysis (corpus-relative-pathname "vilnius-analysis"))))))
