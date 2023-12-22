@@ -1039,7 +1039,7 @@
         },
         "mode": "tap",
         "value": "",
-        "default": "",
+        "default": 1,
         "linkId": "",
         "address": "auto",
         "preArgs": "",
