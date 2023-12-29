@@ -1,10 +1,10 @@
 ![UI screenshot](screenshot.png)
 
-This is the system that I've been using for live improvisation. It allows the processing of the guitar signal, as well as manipulating in real time the sound of the rest of the musicians. I'm continuously experimenting with this, and many parameters are adjusted specifically according to band/project, so consider this repository a mostly held-together-with-tape snapshot of the code as it evolves.
+This is the system that I've been using for live improvisation. It generates sounds in a performative way and processes in real time the guitar signal or other audio sources, like the sound of the ensemble. I'm continuously experimenting with this, and many parameters are adjusted specifically according to band/project, so consider this repository a mostly held-together-with-tape snapshot of the code as it evolves.
 
 To hear an example, I used this system extensively on [Corrosion](https://tavarestrocadoward.bandcamp.com/album/corrosion), the latest recording of the Ward/Trocado/Tavares trio.
 
-This is written in Common Lisp, and uses the [SuperCollider](https://supercollider.github.io/) audio server and [Open Stage Control](http://openstagecontrol.ammd.net/) for the user interface. See [this tutorial](https://nunotrocado.com/software/cl-collider-tutorial-1.html) for how I use Supercollider with Lisp.
+This is written in Common Lisp, and uses the [SuperCollider](https://supercollider.github.io/) audio server and [Open Stage Control](http://openstagecontrol.ammd.net/) for the user interface. See [this tutorial](https://nunotrocado.com/software/cl-collider-tutorial-1.html) for how I use SuperCollider with Lisp.
 
 ## Installation
 
@@ -35,4 +35,4 @@ The user interface is designed for touch screen. All buttons and the vertical fa
 - **"s -gear"**:  opens the ui for the amp modeler, which is running as a vst in the background
 - **large vertical fader**:  simultaneously controls a number of parameters in all of the effects/modules
 - **rectangular XY pad on the left**:  shows a waveform for the present audio buffer, and controls the position (X) and amplitude (Y) of the granular synthesis module
-- **large XY pad on the right**:  plots a corpus of small sound bits, segmented and analyzed with the flucoma library (following [this technique](https://learn.flucoma.org/learn/2d-corpus-explorer/)); touching triggers the nearest individual sound segment
+- **large XY pad on the right**:  plots a corpus of small sound bits, segmented and analyzed with the flucoma library (following [this technique](https://learn.flucoma.org/learn/2d-corpus-explorer/)); touching the pad triggers the nearest individual sound segment
