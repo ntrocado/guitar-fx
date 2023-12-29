@@ -11,10 +11,13 @@
 					    :device "ASIO : ASIO Fireface")
        :port 4444))
 
-(unless (boot-p *s*)
-  (loop :initially (server-boot *s*)
-	:with start := (get-universal-time)
-	:do (sleep 1)
-	:until (or (boot-p *s*)
-		   ;; 10 second timeout
-		   (> (get-universal-time) (+ start 10)))))
+(defun start-sc ()
+  (unless (boot-p *s*)
+    (loop :initially (server-boot *s*)
+	  :with start := (get-universal-time)
+	  :do (sleep 1)
+	  :until (or (boot-p *s*)
+		     ;; 10 second timeout
+		     (> (get-universal-time) (+ start 10))))))
+
+(start-sc)
