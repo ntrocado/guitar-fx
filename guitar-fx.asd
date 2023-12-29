@@ -4,12 +4,14 @@
   :license  "MIT"
   :version "1.0"
   :serial t
-  :depends-on (#:alexandria #:sc-vst #:kdtree-jk)
+  :depends-on (#:alexandria #:kdtree-jk #:cl-collider)
+  ;; :depends-on (#:alexandria #:sc-vst #:kdtree-jk)
   :components ((:file "package")
 	       (:file "util")
 	       (:file "setup")
 	       (:file "guitar-fx")
 	       (:file "corpus")
+	       (:file "gui")
 	       ;; vst works, but for the moment I'd rather use the amp modeller as a standalone
 	       ;; (:file "vst")
 	       ))
