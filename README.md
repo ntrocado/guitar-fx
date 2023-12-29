@@ -8,12 +8,17 @@ This is written in Common Lisp, and uses the [SuperCollider](https://supercollid
 
 ## Installation
 
-If you want to try it for yourself but are unfamiliar with Lisp, follow these steps for a quickstart:
-
 1. Install [SuperCollider](https://supercollider.github.io/).
-2. Follow [these instructions](https://lisp-lang.org/learn/getting-started/) to install SBCL and quicklisp.
-3. Clone this repository into `~/quicklisp/local-projects`.
-4. Start with `run.sh` (Linux and macOS) or `run.bat` (Windows).
+2. Install [Open Stage Control](https://openstagecontrol.ammd.net/download/).
+
+If you are unfamiliar with Lisp:
+
+3. Follow [these instructions](https://lisp-lang.org/learn/getting-started/) to install SBCL and quicklisp.
+4. Clone this repository into `~/quicklisp/local-projects`.
+
+Then,
+
+5. Start with `run.sh` (Linux and macOS) or `run.bat` (Windows).
 
 ## Description
 
