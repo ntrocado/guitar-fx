@@ -41,4 +41,4 @@
 			  :output t
 			  :copier :line)))
 
-(run-gui)
+#-slynk (run-gui)
