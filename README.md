@@ -9,16 +9,17 @@ This is written in Common Lisp, and uses the [SuperCollider](https://supercollid
 ## Installation
 
 1. Install [SuperCollider](https://supercollider.github.io/).
-2. Install [Open Stage Control](https://openstagecontrol.ammd.net/download/).
+2. Install [SC3 Plugins](https://supercollider.github.io/sc3-plugins/).
+3. Install [Open Stage Control](https://openstagecontrol.ammd.net/download/).
 
 If you are unfamiliar with Lisp:
 
-3. Follow [these instructions](https://lisp-lang.org/learn/getting-started/) to install SBCL and quicklisp.
-4. Clone this repository into `~/quicklisp/local-projects`.
+4. Follow [these instructions](https://lisp-lang.org/learn/getting-started/) to install SBCL and quicklisp.
+5. Clone this repository into `~/quicklisp/local-projects`.
 
 Then,
 
-5. Start with `run.sh` (Linux and macOS) or `run.bat` (Windows).
+6. Start with `run.sh` (Linux and maybe macOS) or `run.bat` (Windows).
 
 ## Description
 
