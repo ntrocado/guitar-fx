@@ -92,4 +92,5 @@
       (ecase (truncate (car param))
 	(1 (load-analysis (corpus-relative-pathname "example-analysis")))
 	(2 (load-analysis (corpus-relative-pathname "bm-analysis")))
-	(3 (load-analysis (corpus-relative-pathname "vilnius-analysis"))))))
+	(3 (load-analysis (corpus-relative-pathname "vilnius-analysis")))
+	(4 (load-analysis (corpus-relative-pathname "obras-analysis"))))))
