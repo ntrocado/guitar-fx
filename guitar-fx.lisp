@@ -292,9 +292,12 @@
 ;;; Pre-recorded samples
 
 (defun load-sample (n &optional (buffer *rec*))
-  (ecase n
-    (0 (buffer-read-channel "~/Desktop/estudo1.wav"
-			    :channels 0 :bufnum (bufnum buffer))))
+  (flet ((brc (path)
+	   (buffer-read-channel path :channels 0 :bufnum (bufnum buffer))))
+    (ecase n
+      (0 (brc "~/OneDrive/Documents/Taipal/f0.wav"))
+      (1 (brc "~/OneDrive/Documents/Taipal/f1.wav"))
+      (2 (brc "~/OneDrive/Documents/Taipal/f2.wav"))))
   (update-sample-plot buffer))
 
 (sc-osc:add-osc-responder
@@ -302,9 +305,7 @@
     "/load_sample"
     (lambda (&rest param)
       (let ((value (car param)))
-	(if (integerp value)
-	    (load-sample value)
-	    (warn "load_sample received with ~a instead of integer." value)))))
+	(load-sample value))))
 
 ;;; Grains
 
