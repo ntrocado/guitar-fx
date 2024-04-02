@@ -270,7 +270,7 @@
 
 (defun update-sample-plot (buf)
   (let ((buffer-len (frames buf))
-	(frames (buffer-to-array buf :channels '(0))))
+	(frames (buffer-to-array buf :channels 0)))
     (loop :with vec := (make-array 500)
 	  :for i :from 0 :below buffer-len :by (ceiling (/ buffer-len 500))
 	  :for j :from 0
