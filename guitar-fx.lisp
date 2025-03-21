@@ -2,7 +2,7 @@
 
 (defparameter *input-mic* 0)
 (defparameter *input-pre* 1)
-(defparameter *input-post* 4)
+(defparameter *input-post* 6)
 (defparameter *output-bus* 4)
 
 (defparameter *nodes* (make-hash-table))
@@ -22,7 +22,7 @@
 	 (format t "~a: ~a~%" resource state)
 	 (finish-output))))))
 
-(defmacro make-toggle (name &key (gate-p nil))
+(defmacro make-toggle (name &key (gate-p nil) (pos :head))
   (let ((start-fun (intern (concatenate 'string (symbol-name name) "-ON")))
 	(stop-fun (intern (concatenate 'string (symbol-name name) "-OFF")))
 	(toggle-fun (intern (concatenate 'string (symbol-name name) "-TOGGLE"))))
@@ -30,7 +30,7 @@
     (a:with-gensyms (node)
       `(progn
 	 (defun ,start-fun ()
-	   (setf (gethash ',name *nodes*) (synth ',name)))
+	   (setf (gethash ',name *nodes*) (synth ',name :pos ,pos)))
 
 	 (defun ,stop-fun ()
 	   (a:if-let (,node (gethash ',name *nodes*))
@@ -183,23 +183,23 @@
   (let* ((in (in.ar (getf *in-bus* :pre)))
 	 (trig (coyote.kr in 0.2 0.2 0.01 0.8 0.05 0.1)))
     (out.ar *output-bus* (pan2.ar (leak-dc.ar
-			(* (env-gen.ar (perc 0.0001
-					     (demand.kr trig 0 (d-rand '(.05 .07 .09 .2 1)
-								       +inf+))
-					     (demand.kr trig 0 (d-white .07 .7))
-					     -4)
-				       :gate trig)
-			   (+ (resonz.ar (lf-saw.ar (demand.kr trig 0
-							       (d-rand (mapcar #'midicps notes)
-								       +inf+))
-						    0 0.5)
-					 (+ 100 (demand.kr trig 0 (d-white 0 1800))))
-			      (bpf.ar (white-noise.ar 0.3)
-				      (+ 100 (demand.kr trig 1 (d-white 200 2000)))
-				      (+ .1 (demand.kr trig 1 (d-white .1 2)))
-				      ))
-			   amp))
-		       (lf-noise1.kr 5 2 -1)))))
+				   (* (env-gen.ar (perc 0.0001
+							(demand.kr trig 0 (d-rand '(.05 .07 .09 .2 1)
+										  +inf+))
+							(demand.kr trig 0 (d-white .07 .7))
+							-4)
+						  :gate trig)
+				      (+ (resonz.ar (lf-saw.ar (demand.kr trig 0
+									  (d-rand (mapcar #'midicps notes)
+										  +inf+))
+							       0 0.5)
+						    (+ 100 (demand.kr trig 0 (d-white 0 1800))))
+					 (bpf.ar (white-noise.ar 0.3)
+						 (+ 100 (demand.kr trig 1 (d-white 200 2000)))
+						 (+ .1 (demand.kr trig 1 (d-white .1 2)))
+						 ))
+				      amp))
+				  (lf-noise1.kr 5 2 -1)))))
 
 (make-toggle onsets)
 
@@ -235,16 +235,17 @@
 					    0 dur)))))
     
     (buf-wr.ar (x-fade2.ar (* in
-			      1;; (env-gen.kr (linen .05) :gate rec)
+			      1	;; (env-gen.kr (linen .05) :gate rec)
 			      )
 			   play
 			   (var-lag.kr (- 1 (* 2 rec)) .03))
 	       buf ptr)
-    (out.ar *output-bus* (pan2.ar (* play
-			  (env-gen.kr (asr .01 1 .7)
-				      :gate (- 1 (* (delay-1.kr (< dur (* (sample-rate.ir) .25))) (- 1 rec)))
-				      :act :free))
-		       (range (* (in.kr *ctrl-bus*) (lf-noise1.kr 1)) -1 1)))))
+    (out.ar *output-bus* (pan-az.ar 4
+				    (* play
+				       (env-gen.kr (asr .01 1 .7)
+						   :gate (- 1 (* (delay-1.kr (< dur (* (sample-rate.ir) .25))) (- 1 rec)))
+						   :act :free))
+				    (lf-saw.kr (range (in.kr *ctrl-bus*) 0.1 2))))))
 
 
 (defparameter *loop-node* nil)
@@ -295,8 +296,8 @@
   (flet ((brc (path)
 	   (buffer-read-channel path :channels 0 :bufnum (bufnum buffer))))
     (ecase n
-      (0 (brc "~/OneDrive/Documents/Taipal/f0.wav"))
-      (1 (brc "~/OneDrive/Documents/Taipal/f1.wav"))
+      (0 (brc "~/OneDrive/Documents/Mnemosyne/throat.wav"))
+      (1 (brc "~/OneDrive/Documents/Mnemosyne/valkyrie.wav"))
       (2 (brc "~/OneDrive/Documents/Taipal/f2.wav"))))
   (update-sample-plot buffer))
 
@@ -318,8 +319,8 @@
 		      (t-rand.kr 0 0.01 clk)))
 	 (pan (lf-noise1.kr 10 2 -1)))
     (out.ar *output-bus* (* (tgrains.ar 4 clk buffer 1 position dur pan 0.5)
-		 (env-gen.ar (asr 1) :gate gate :act :free)
-		 amp))))
+			    (env-gen.ar (asr 1) :gate gate :act :free)
+			    amp))))
 
 (sc-osc:add-osc-responder
  *osc*
@@ -331,6 +332,21 @@
        (ctrl node :pos x)
        (ctrl node :amp y)))))
 
+(sc-osc:add-osc-responder
+ *osc*
+ "/grainX"
+ (lambda (&rest param)
+   (a:when-let (node (gethash 'grains *nodes*))
+     (ctrl node :pos (first param))
+     (print (first param)))))
+
+(sc-osc:add-osc-responder
+ *osc*
+ "/grainY"
+ (lambda (&rest param)
+   (a:when-let (node (gethash 'grains *nodes*))
+     (ctrl node :amp (first param)))))
+
 (make-toggle grains :gate-p t)
 
 
@@ -338,9 +354,10 @@
 
 (defsynth hit ((buffer *rec*))
   (out.ar *output-bus*
-	  (pan2.ar (* (env-gen.kr (perc 0.001 (t-rand.kr .1 .7 1) 1.7) :act :free)
+	  (pan4.ar (* (env-gen.kr (perc 0.001 (t-rand.kr .1 .7 1) 1.7) :act :free)
 		      (play-buf.ar 1 buffer 1
 				   :start-pos (t-rand.kr 0 (buf-frames.ir buffer) 1)))
+		   (t-rand.kr -.5 .5 1)
 		   (t-rand.kr -.5 .5 1))))
 
 (make-toggle hit)
@@ -382,8 +399,10 @@
 (defsynth mag-noise ((buffer *rec*) (w1 12) (w2 10))
   (let ((window1 (expt 2 w1))
 	(window2 (expt 2 w2)))
-    (out.ar *output-bus* (pan2.ar (ifft.ar (pv-mag-noise (fft (local-buf (list window1 window2))
-							      (play-buf.ar 1 buffer .75 :loop 1))))))))
+    (out.ar *output-bus* (pan-az.ar 4
+				    (ifft.ar (pv-mag-noise (fft (local-buf (list window1 window2))
+								(play-buf.ar 1 buffer .75 :loop 1))))
+				    (lf-saw.kr)))))
 
 (make-toggle mag-noise)
 
@@ -424,13 +443,15 @@
 		 (pan2.ar (sin-osc.ar freq 0 amp)
 			  pan))))
 
-(defsynth planta ((amp .3) pan (gate 1) (out *output-bus*))
+(defsynth planta ((amp .3) (gate 1) (out *output-bus*))
   (out.ar out (* (env-gen.ar (asr .001 amp 1) :gate gate :act :free)
-		 (let ((trig (dust.kr (env-gen.ar (env '(10 .1 10) '(.1 10))))))
+		 (let ((trig (dust.kr (range (sin-osc.kr .1) 15 .1))))
 		  (hpf.ar (sos.ar (env-gen.ar (perc) :gate trig)
-				  0 2 0 (demand.kr trig 1 (d-white 1.45 1.6))
-				  '(-0.9995 -0.9995))
-			  1000)))))
+				  0 2 0 (demand.kr trig 1 (d-white .45 1.6))
+				  '(-0.992 -0.9995))
+			  600)))))
+
+(make-toggle planta)
 
 (defun decay+tremolo-env (&optional (repeats 30))
   (let ((levels (append '(0 1 0)
@@ -480,6 +501,48 @@
     (lambda (&rest param)
       (declare (ignore param))
       (microtonal-glitch)))
+
+
+;;; square wave
+
+(defsynth square ((amp .2))
+  (replace-out.ar
+   *output-bus*
+   (freeverb.ar
+    (limiter.ar
+     (* (pan2.ar (select.ar (lf-pulse.ar (range (in.kr *ctrl-bus*) .6 1.2)
+					 0
+					 (lin-lin.kr (in.kr *ctrl-bus*) 0 1 .95 .001))
+			    (list
+			     (resonz.ar (gendy1.ar 1 3 1.0 1.0 30
+						   (range (sin-osc.kr .3) 50 180)
+						   (sin-osc.kr .2)
+						   (sin-osc.kr .1 .1)
+						   12)
+					600
+					(range (sin-osc.kr .3) .1 10))
+			     (in.ar *output-bus* 2))))
+	amp)
+     .95))))
+
+(make-toggle square :pos :tail)
+
+
+;;; tremelo
+
+(defsynth tremelo ((speed 5))
+  (replace-out.ar *output-bus*
+		  (* (in.ar *output-bus* 2) (lf-pulse.kr speed))))
+
+(make-toggle tremelo :pos :tail)
+
+(sc-osc:add-osc-responder *osc* "/tremelo-speed"
+    (lambda (&rest param)
+      (destructuring-bind (speed)
+	  param
+	(print (first param))
+	(ctrl (gethash 'tremelo *nodes*) :speed speed))))
+
 
 (defun gui () ;; Does not work
   (uiop:launch-program "c:/Programas/Open-stage-control/open-stage-control.exe -- --send localhost:8000 --load c:/Users/trocado/OneDrive/Documents/Lisp/cl-collider/guitar-fx/guitar-fx.json --custom-module C:\Users\trocado\OneDrive\Documents\Lisp\cl-collider\guitar-fx\midi-osc.js --osc-port 8088"

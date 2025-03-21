@@ -29,16 +29,19 @@
   (flet ((source-relative (file)
 	   (uiop:native-namestring
 	    (merge-pathnames file (asdf:system-source-directory "guitar-fx")))))
-    (simple-inferiors:run (uiop:native-namestring *open-stage-control-program*)
-			  (list
-			   #+windows "--"
-			   "--send" "localhost:8000"
-			   "--osc-port" "8088"
-			   "--load" (source-relative #p"gui/guitar-fx.json")
-			   "--custom-module" (source-relative #p"gui/midi-osc.js")
-			   "--midi" "fcb:0,1"
-			   "--no-qrcode")
-			  :output t
-			  :copier :line)))
+    (bt:make-thread
+     (lambda ()
+       (simple-inferiors:run (uiop:native-namestring *open-stage-control-program*)
+			     (list
+			      #+windows "--"
+			      "--send" "localhost:8000"
+			      "--osc-port" "8088"
+			      "--load" (source-relative #p"gui/guitar-fx.json")
+			      "--custom-module" (source-relative #p"gui/midi-osc.js")
+			      "--midi" "fcb:0,1"
+			      "--no-qrcode")
+			     :output t
+			     :copier :line))
+     :name "guitar-fx gui")))
 
 #-slynk (run-gui)

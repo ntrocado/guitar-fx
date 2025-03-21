@@ -1,7 +1,7 @@
 var routing = {
     // midi cc vs widget id
     16: 'ctrl',
-    7: 'vol',
+    7: 'vol'
     // etc
 }
 
@@ -10,12 +10,14 @@ var onoff = {
     2: '/RANDOM-FM',
     3: '/ONSETS',
     4: '/ZIGZAG',
-    5: '/HIT',
     6: '/RECORD',
     7: '/GRAINS',
+    8: '/HIT',
     9: '/LOOP',
     10: '/STOP',
 }
+
+var xyValue = [0, 0]
 
 module.exports = {
 
@@ -32,9 +34,16 @@ module.exports = {
                 // assign args to variables
                 var [channel, ctrl, value] = args.map(arg=>arg.value)
 
-                // simple conditions
-                if (ctrl === 80) receive('/SET', 'widget_id', value / 127)
-
+                if (ctrl === 100) {
+		    xyValue[0] = value / 127
+		    receive('/SET', '/XY', ...xyValue)
+		    return
+		} else if (ctrl === 101) {
+		    xyValue[1] = value / 127
+		    receive('/SET', '/XY', ...xyValue)
+		    return
+		}
+		
                 // simple routing table (midi cc vs widget id)
                 if (routing[ctrl]) receive('/SET', routing[ctrl], value / 127)
 
