@@ -1,6 +1,6 @@
 {
   "createdWith": "Open Stage Control",
-  "version": "1.25.6",
+  "version": "1.27.1",
   "type": "session",
   "geometry": {
     "launcher": {
@@ -140,7 +140,8 @@
         "bypass": false,
         "onCreate": "",
         "onValue": "",
-        "onTouch": ""
+        "onTouch": "",
+        "axisLock": ""
       },
       {
         "type": "button",
@@ -471,7 +472,8 @@
         "lock": false,
         "onCreate": "",
         "onTouch": "",
-        "borderRadius": "auto"
+        "borderRadius": "auto",
+        "colorKnob": "auto"
       },
       {
         "type": "xy",
@@ -526,7 +528,8 @@
         "lock": false,
         "onCreate": "",
         "onTouch": "",
-        "borderRadius": "auto"
+        "borderRadius": "auto",
+        "axisLock": ""
       },
       {
         "type": "button",
@@ -740,7 +743,8 @@
         "onValue": "",
         "lock": false,
         "onCreate": "",
-        "borderRadius": "auto"
+        "borderRadius": "auto",
+        "bypass": false
       },
       {
         "type": "text",
@@ -776,7 +780,8 @@
         "onValue": "",
         "lock": false,
         "onCreate": "",
-        "borderRadius": "auto"
+        "borderRadius": "auto",
+        "bypass": false
       },
       {
         "type": "plot",
@@ -820,7 +825,9 @@
         "target": "",
         "onCreate": "",
         "onValue": "",
-        "borderRadius": "auto"
+        "borderRadius": "auto",
+        "logScaleX": false,
+        "logScaleY": false
       },
       {
         "type": "button",
@@ -1178,7 +1185,8 @@
         "decimals": 2,
         "target": "",
         "onCreate": "",
-        "onValue": "set(\"canvas_1\", JSON.parse(value))"
+        "onValue": "set(\"canvas_1\", JSON.parse(value))",
+        "bypass": false
       },
       {
         "type": "dropdown",
@@ -1212,7 +1220,8 @@
           "BM": 2,
           "Vilnius": 3,
           "Obras": 4,
-          "Babel": 5
+          "Babel": 5,
+          "Batalha": 6
         },
         "value": "",
         "default": "",
@@ -1509,7 +1518,8 @@
         "bypass": false,
         "onCreate": "",
         "onValue": "",
-        "onTouch": ""
+        "onTouch": "",
+        "colorKnob": "auto"
       }
     ],
     "tabs": [],
@@ -1518,6 +1528,7 @@
     "hideMenu": false,
     "onCreate": "",
     "borderRadius": "auto",
-    "tabsPosition": "top"
+    "tabsPosition": "top",
+    "onPreload": ""
   }
 }
