@@ -43,10 +43,11 @@
 
 (defun populate-canvas (&optional (slices *slices*))
   (clear-canvas)
+  (sleep .04)
   (loop :for sl :across slices
 	:do (send-osc-message "/canvasHelper" (list (slice-norm-centroid sl)
 						    (- 1 (slice-norm-loudness sl))))
-	:do (sleep .05)))
+	:do (sleep .03)))
 
 (sc-osc:add-osc-responder *osc* "/corpus2d"
     (lambda (&rest param)
