@@ -99,4 +99,5 @@
 	(2 (load-analysis (corpus-relative-pathname "bm-analysis")))
 	(3 (load-analysis (corpus-relative-pathname "vilnius-analysis")))
 	(4 (load-analysis (corpus-relative-pathname "obras-analysis")))
-	(5 (load-analysis (corpus-relative-pathname "babel-analysis"))))))
+	(5 (load-analysis (corpus-relative-pathname "babel-analysis")))
+	(6 (load-analysis (corpus-relative-pathname "batalha-analysis"))))))
