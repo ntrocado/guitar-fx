@@ -1,13 +1,15 @@
 (in-package #:guitar-fx)
 
-(defsynth play-slice (buf start stop)
-  (out.ar 0 (dup (* (buf-rd.ar 1 buf (phasor.ar 0 (buf-rate-scale.ir buf) start stop) 0)
-		    (env-gen.kr (env '(0 1 1 0)
-				     (list .03 (- (/ (- stop start)
-						     (buf-sample-rate.ir buf))
-						  .06)
-					   .03))
-				:act :free)))))
+(defsynth play-slice (buf start stop (pan 0) (amp 1))
+  (out.ar 0 (pan2.ar (* (buf-rd.ar 1 buf (phasor.ar 0 (buf-rate-scale.ir buf) start stop) 0)
+			(env-gen.kr (env '(0 1 1 0)
+					 (list .03 (- (/ (- stop start)
+							 (buf-sample-rate.ir buf))
+						      .06)
+					       .03))
+				    :act :free)
+			amp)
+		     pan)))
 
 (defstruct slice
   index
@@ -28,7 +30,9 @@
 	   :buf buf
 	   :start (slice-start slice)
 	   :stop (min (+ (slice-start slice) (* 2 (sr buf)))
-		      (or (slice-end slice) (frames buf))))
+		      (or (slice-end slice) (frames buf)))
+	   :pan (rrand -.25 .25)
+	   :amp (rrand .3 1.0))
     (setf *current-slice* (slice-index slice))))
 
 (defun sequence->osc-string (seq)
