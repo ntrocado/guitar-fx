@@ -352,6 +352,7 @@
 
 ;;;;
 
+<<<<<<< Updated upstream
 (defsynth hit ((buffer *rec*))
   (out.ar *output-bus*
 	  (pan4.ar (* (env-gen.kr (perc 0.001 (t-rand.kr .1 .7 1) 1.7) :act :free)
@@ -359,8 +360,34 @@
 				   :start-pos (t-rand.kr 0 (buf-frames.ir buffer) 1)))
 		   (t-rand.kr -.5 .5 1)
 		   (t-rand.kr -.5 .5 1))))
+=======
+(defsynth hit ((buffer *rec*) (gate 1) (dur-ctl .5) (rate-ctl .5))
+  (let* ((dur (lag.kr (lin-lin dur-ctl 0 1 .02 .31) .5))
+	 (window .02)
+	 (loop-trig (impulse.kr (/ 1 dur)))
+	 (env (env-gen.ar (env '(0 1 0)
+			       (list window (- dur window))
+			       '(:lin -8))
+			  :gate loop-trig))
+	 (start (t-rand.kr 0
+			   (buf-frames.ir buffer)
+			   gate))
+	 (rate (lag.kr (lin-lin rate-ctl 0 1 .9 1.1) .5))
+	 (sig (play-buf.ar 1 buffer rate :trig loop-trig :start-pos start)))
+    (out.ar *output-bus* (* sig env (env-gen.kr (asr 0 1 .1) :gate gate :act :free)))))
+>>>>>>> Stashed changes
 
-(make-toggle hit)
+(sc-osc:add-osc-responder
+ *osc*
+ "/hit_xy"
+ (lambda (&rest param)
+   (destructuring-bind (x y)
+       param
+     (a:when-let (node (gethash 'hit *nodes*))
+       (ctrl node :dur-ctl x)
+       (ctrl node :rate-ctl y)))))
+
+(make-toggle hit :gate-p t)
 
 
 (defsynth fm ((freq 500) (m-ratio 1) (c-ratio 1) (index 1) (i-scale 5)
@@ -547,3 +574,45 @@
 (defun gui () ;; Does not work
   (uiop:launch-program "c:/Programas/Open-stage-control/open-stage-control.exe -- --send localhost:8000 --load c:/Users/trocado/OneDrive/Documents/Lisp/cl-collider/guitar-fx/guitar-fx.json --custom-module C:\Users\trocado\OneDrive\Documents\Lisp\cl-collider\guitar-fx\midi-osc.js --osc-port 8088"
 		       :output *standard-output* :error-output *standard-output*))
+
+(defparameter *sin-follow-buf* (buffer-alloc 2048))
+
+(defun exp-rand (mi ma)
+  (lin-exp (random 1.0) 0 1.0 mi ma))
+
+(defun ranged-random (mi ma)
+  (+ mi (random (- ma mi))))
+
+(defmacro repeat (n &body expr)
+  `(loop :repeat ,n
+	 :collect ,@expr))
+
+(defun new-sound ()
+  (buffer-fill *sin-follow-buf*
+	       :sine
+	       (sort (copy-seq (repeat 16 (exp-rand 0.05 0.9))) #'<)
+	       :frequencies (sort (copy-seq (repeat 16 (exp-rand 0.75 40))) #'>)
+	       :phases (repeat 16 (random (* 2 pi)))))
+
+(new-sound)
+
+(defsynth sin-follow ((amp .6))
+  (let* ((control (in.kr *ctrl-bus*))
+	 (in-freq (first (tartini.kr (in.ar (getf *in-bus* :pre)))))
+	 (sig (leak-dc.ar (mix (osc.ar *sin-follow-buf*
+				       (list in-freq (* 2.01 in-freq))
+				       .5)))))
+    (out.ar *output-bus*
+	    (pan2.ar (freeverb.ar sig)
+		     0
+		     (* (env-follow.ar (in.ar (getf *in-bus* :pre)))
+			amp)))))
+
+(make-toggle sin-follow)
+
+(sc-osc:add-osc-responder
+ *osc*
+ "/sin-follow-new-sound"
+ (lambda (&rest param)
+   (declare (ignore param))
+   (new-sound)))
