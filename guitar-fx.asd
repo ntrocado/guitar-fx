@@ -4,7 +4,7 @@
   :license  "MIT"
   :version "1.0"
   :serial t
-  :depends-on (#:alexandria #:kdtree-jk #:cl-collider)
+  :depends-on (#:alexandria #:kdtree-jk #:cl-collider #:simple-inferiors)
   ;; :depends-on (#:alexandria #:sc-vst #:kdtree-jk)
   :components ((:file "package")
 	       (:file "util")
