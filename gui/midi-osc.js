@@ -18,10 +18,7 @@ var onoff = {
 }
 
 var xyValue = [0, 0]
-<<<<<<< Updated upstream
-=======
 var hitXYValue = [0, 0]
->>>>>>> Stashed changes
 
 module.exports = {
 
@@ -38,7 +35,6 @@ module.exports = {
                 // assign args to variables
                 var [channel, ctrl, value] = args.map(arg=>arg.value)
 
-<<<<<<< Updated upstream
                 if (ctrl === 100) {
 		    xyValue[0] = value / 127
 		    receive('/SET', '/XY', ...xyValue)
@@ -48,7 +44,6 @@ module.exports = {
 		    receive('/SET', '/XY', ...xyValue)
 		    return
 		}
-=======
                 if (ctrl === 37) {
 		    xyValue[0] = value / 127
 		    receive('/SET', '/XY', ...xyValue)
@@ -68,7 +63,6 @@ module.exports = {
 		}
 
 
->>>>>>> Stashed changes
 		
                 // simple routing table (midi cc vs widget id)
                 if (routing[ctrl]) receive('/SET', routing[ctrl], value / 127)

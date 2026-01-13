@@ -1,6 +1,6 @@
 {
   "createdWith": "Open Stage Control",
-  "version": "1.27.1",
+  "version": "1.30.1",
   "type": "session",
   "geometry": {
     "launcher": {
@@ -85,7 +85,8 @@
         "onValue": "set(\"this\", value)",
         "onTouch": "",
         "onDraw": "if (value[0] === -1) {\n  ctx.clearRect(0, 0, width, height);\n}\nelse {\n  ctx.beginPath();\n  ctx.arc(value[0] * width, value[1] * height, 3, 0, Math.PI * 2);\n  // use colorFill property as stroke color\n  ctx.strokeStyle = cssVars.colorFill;\n  // draw stroke\n  ctx.stroke();\n  ctx.closePath();\n}",
-        "onResize": ""
+        "onResize": "",
+        "contextType": "2d"
       },
       {
         "type": "xy",
@@ -141,7 +142,12 @@
         "onCreate": "",
         "onValue": "",
         "onTouch": "",
-        "axisLock": ""
+        "axisLock": "",
+        "label": "",
+        "stepsX": false,
+        "stepsY": false,
+        "clipX": "",
+        "clipY": ""
       },
       {
         "type": "button",
@@ -187,7 +193,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -233,7 +240,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -279,7 +287,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -325,7 +334,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -371,7 +381,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -417,7 +428,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "fader",
@@ -473,7 +485,8 @@
         "onCreate": "",
         "onTouch": "",
         "borderRadius": "auto",
-        "colorKnob": "auto"
+        "colorKnob": "auto",
+        "touchZone": "all"
       },
       {
         "type": "xy",
@@ -529,7 +542,12 @@
         "onCreate": "",
         "onTouch": "",
         "borderRadius": "auto",
-        "axisLock": ""
+        "axisLock": "",
+        "label": "",
+        "stepsX": false,
+        "stepsY": false,
+        "clipX": "",
+        "clipY": ""
       },
       {
         "type": "button",
@@ -575,7 +593,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -621,7 +640,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "input",
@@ -664,7 +684,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "maxLength": ""
+        "maxLength": "",
+        "noCanvas": false
       },
       {
         "type": "input",
@@ -707,7 +728,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "maxLength": ""
+        "maxLength": "",
+        "noCanvas": false
       },
       {
         "type": "text",
@@ -744,7 +766,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "bypass": false
+        "bypass": false,
+        "interaction": false
       },
       {
         "type": "text",
@@ -781,7 +804,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "bypass": false
+        "bypass": false,
+        "interaction": false
       },
       {
         "type": "plot",
@@ -827,7 +851,8 @@
         "onValue": "",
         "borderRadius": "auto",
         "logScaleX": false,
-        "logScaleY": false
+        "logScaleY": false,
+        "interaction": false
       },
       {
         "type": "button",
@@ -873,7 +898,8 @@
         "onCreate": "",
         "onValue": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "switch",
@@ -965,7 +991,8 @@
         "lock": false,
         "onCreate": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -1011,7 +1038,8 @@
         "onCreate": "",
         "onValue": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -1057,7 +1085,8 @@
         "onCreate": "",
         "onValue": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -1103,7 +1132,8 @@
         "onCreate": "",
         "onValue": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -1149,7 +1179,8 @@
         "onCreate": "",
         "onValue": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "text",
@@ -1186,7 +1217,8 @@
         "target": "",
         "onCreate": "",
         "onValue": "set(\"canvas_1\", JSON.parse(value))",
-        "bypass": false
+        "bypass": false,
+        "interaction": false
       },
       {
         "type": "dropdown",
@@ -1325,7 +1357,8 @@
         "ignoreDefaults": false,
         "bypass": false,
         "onCreate": "",
-        "onValue": ""
+        "onValue": "",
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -1371,7 +1404,8 @@
         "onCreate": "",
         "onValue": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -1417,7 +1451,8 @@
         "onCreate": "",
         "onValue": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "button",
@@ -1463,7 +1498,8 @@
         "onCreate": "",
         "onValue": "",
         "borderRadius": "auto",
-        "decoupled": false
+        "decoupled": false,
+        "onTouch": ""
       },
       {
         "type": "fader",
@@ -1519,9 +1555,8 @@
         "onCreate": "",
         "onValue": "",
         "onTouch": "",
-        "colorKnob": "auto"
-<<<<<<< Updated upstream
-=======
+        "colorKnob": "auto",
+        "touchZone": "all"
       },
       {
         "type": "xy",
@@ -1577,8 +1612,106 @@
         "bypass": false,
         "onCreate": "",
         "onValue": "",
+        "onTouch": "",
+        "label": "",
+        "stepsX": false,
+        "stepsY": false,
+        "clipX": "",
+        "clipY": ""
+      },
+      {
+        "type": "button",
+        "top": 650,
+        "left": 880,
+        "id": "SIN-FOLLOW",
+        "visible": true,
+        "interaction": true,
+        "comments": "",
+        "width": 110,
+        "height": 80,
+        "expand": "false",
+        "colorText": "auto",
+        "colorWidget": "auto",
+        "colorStroke": "auto",
+        "colorFill": "auto",
+        "alphaStroke": "auto",
+        "alphaFillOff": "auto",
+        "alphaFillOn": "auto",
+        "lineWidth": "auto",
+        "padding": "auto",
+        "html": "",
+        "css": "",
+        "colorTextOn": "auto",
+        "label": "auto",
+        "vertical": false,
+        "wrap": false,
+        "on": 1,
+        "off": 0,
+        "mode": "toggle",
+        "doubleTap": false,
+        "value": "",
+        "default": "",
+        "linkId": "<<allButtons",
+        "address": "/SIN-FOLLOW",
+        "preArgs": "",
+        "typeTags": "",
+        "decimals": 2,
+        "target": "",
+        "ignoreDefaults": false,
+        "bypass": false,
+        "onValue": "",
+        "lock": false,
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false,
         "onTouch": ""
->>>>>>> Stashed changes
+      },
+      {
+        "type": "button",
+        "top": 650,
+        "left": 1010,
+        "id": "New sound",
+        "visible": true,
+        "interaction": true,
+        "comments": "",
+        "width": 110,
+        "height": 80,
+        "expand": "false",
+        "colorText": "auto",
+        "colorWidget": "auto",
+        "colorStroke": "auto",
+        "colorFill": "auto",
+        "alphaStroke": "auto",
+        "alphaFillOff": "auto",
+        "alphaFillOn": "auto",
+        "lineWidth": "auto",
+        "padding": "auto",
+        "html": "",
+        "css": "",
+        "colorTextOn": "auto",
+        "label": "auto",
+        "vertical": false,
+        "wrap": false,
+        "on": 1,
+        "off": 0,
+        "mode": "momentary",
+        "doubleTap": false,
+        "value": "",
+        "default": "",
+        "linkId": "<<allButtons",
+        "address": "/sin-follow-new-sound",
+        "preArgs": "",
+        "typeTags": "",
+        "decimals": 2,
+        "target": "",
+        "ignoreDefaults": false,
+        "bypass": false,
+        "onValue": "",
+        "lock": false,
+        "onCreate": "",
+        "borderRadius": "auto",
+        "decoupled": false,
+        "onTouch": ""
       }
     ],
     "tabs": [],
@@ -1588,6 +1721,7 @@
     "onCreate": "",
     "borderRadius": "auto",
     "tabsPosition": "top",
-    "onPreload": ""
+    "onPreload": "",
+    "onTouch": ""
   }
 }
