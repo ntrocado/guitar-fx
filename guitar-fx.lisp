@@ -129,7 +129,7 @@
 
 ;;;;
 
-(defsynth feedback-fm ((amp .6))
+(defsynth feedback-fm ((amp .2))
   (let* ((control (in.kr *ctrl-bus*))
 	 (in-freq (first (tartini.kr (in.ar (getf *in-bus* :pre)))))
 	 (max-speed (range (lf-noise1.kr 1) 2 8))
@@ -591,22 +591,23 @@
   (buffer-fill *sin-follow-buf*
 	       :sine
 	       (sort (copy-seq (repeat 16 (exp-rand 0.05 0.9))) #'<)
-	       :frequencies (sort (copy-seq (repeat 16 (exp-rand 0.75 40))) #'>)
+	       :frequencies (sort (copy-seq (repeat 16 (exp-rand 0.75 0))) #'>)
 	       :phases (repeat 16 (random (* 2 pi)))))
 
 (new-sound)
 
-(defsynth sin-follow ((amp .6))
-  (let* ((control (in.kr *ctrl-bus*))
-	 (in-freq (first (tartini.kr (in.ar (getf *in-bus* :pre)))))
-	 (sig (leak-dc.ar (mix (osc.ar *sin-follow-buf*
-				       (list in-freq (* 2.01 in-freq))
-				       .5)))))
+(defsynth sin-follow ((amp .1))
+  (let* ((in-freq (first (tartini.kr (hpf.ar (in.ar (getf *in-bus* :pre))
+					     60))))
+	 (sig (leak-dc.ar (resonz.ar (mix  (osc.ar *sin-follow-buf*
+						   (list (* .5 in-freq)
+							 (* 1.01 in-freq))))
+				     440))))
     (out.ar *output-bus*
-	    (pan2.ar (freeverb.ar sig)
+	    (pan2.ar (tanh sig)
 		     0
 		     (* (env-follow.ar (in.ar (getf *in-bus* :pre)))
-			amp)))))
+			(* 6 amp))))))
 
 (make-toggle sin-follow)
 
