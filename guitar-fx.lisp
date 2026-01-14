@@ -575,6 +575,9 @@
   (uiop:launch-program "c:/Programas/Open-stage-control/open-stage-control.exe -- --send localhost:8000 --load c:/Users/trocado/OneDrive/Documents/Lisp/cl-collider/guitar-fx/guitar-fx.json --custom-module C:\Users\trocado\OneDrive\Documents\Lisp\cl-collider\guitar-fx\midi-osc.js --osc-port 8088"
 		       :output *standard-output* :error-output *standard-output*))
 
+
+;;; Synth stuff
+
 (defparameter *sin-follow-buf* (buffer-alloc 2048))
 
 (defun exp-rand (mi ma)
@@ -596,7 +599,7 @@
 
 (new-sound)
 
-(defsynth sin-follow ((amp .1))
+(defsynth sin-follow ((amp .3))
   (let* ((in-freq (first (tartini.kr (hpf.ar (in.ar (getf *in-bus* :pre))
 					     60))))
 	 (sig (leak-dc.ar (resonz.ar (mix  (osc.ar *sin-follow-buf*
@@ -604,7 +607,7 @@
 							 (* 1.01 in-freq))))
 				     440))))
     (out.ar *output-bus*
-	    (pan2.ar (tanh sig)
+	    (pan2.ar (compander.ar (tanh sig))
 		     0
 		     (* (env-follow.ar (in.ar (getf *in-bus* :pre)))
 			(* 6 amp))))))
@@ -617,3 +620,40 @@
  (lambda (&rest param)
    (declare (ignore param))
    (new-sound)))
+
+(defsynth vocal-bass ((amp 1))
+  (let* ((in (in.ar (getf *in-bus* :pre)))
+	 (in-freq (/ (first (tartini.kr (hpf.ar (in.ar (getf *in-bus* :pre))
+						60)))
+		     2))
+	 (snd (pulse.ar in-freq))
+	 (snd (rlpf.ar snd (x-line.kr 170 8000 3)
+		       .2))
+	 (snd (* snd (line.kr 0 1 '(.3 .2))))
+	 (snd (sum (bpf.ar snd (mapcar (lambda (x) (lin-exp (squared (normalizer.ar x))
+							    0 1 100 8000))
+				       (alexandria:iota 20))
+			   .2)))
+	 (snd (+ (rlpf.ar snd '(200 230)) (hpf.ar (* snd (dbamp -15)) 3000)))
+	 (snd (tanh snd)))
+    (out.ar *output-bus* (compander.ar (* (env-follow.ar in)
+					  snd
+					  amp)))))
+
+(make-toggle vocal-bass)
+
+(defsynth crazy-pad ((amp 1))
+  (let* ((in (in.ar (getf *in-bus* :pre)))
+	 (sig (pitch-shift.ar in
+			      '(1.5 1 .1 .075 .05)
+			      (list .5
+				    1
+				    (range (lf-noise1.ar .14) 1.5 2.1)
+				    (range (lf-noise1.ar .19) 1.6 2.2)
+				    2)
+			      .02 .004))
+	 (sig (rlpf.ar sig 700 .1))
+	 (sig (freeverb.ar sig)))
+    (out.ar *output-bus* (splay.ar sig 1 amp))))
+
+(make-toggle crazy-pad)
