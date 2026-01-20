@@ -8,7 +8,7 @@
 					    :realtime-mem-size 131072
 					    :block-size 16
 					    :hardware-samplerate 44100
-					    :device "ASIO : ASIO Fireface")
+					    :device "Babyface")
        :port 4444))
 
 (defun start-sc ()
