@@ -352,15 +352,6 @@
 
 ;;;;
 
-<<<<<<< Updated upstream
-(defsynth hit ((buffer *rec*))
-  (out.ar *output-bus*
-	  (pan4.ar (* (env-gen.kr (perc 0.001 (t-rand.kr .1 .7 1) 1.7) :act :free)
-		      (play-buf.ar 1 buffer 1
-				   :start-pos (t-rand.kr 0 (buf-frames.ir buffer) 1)))
-		   (t-rand.kr -.5 .5 1)
-		   (t-rand.kr -.5 .5 1))))
-=======
 (defsynth hit ((buffer *rec*) (gate 1) (dur-ctl .5) (rate-ctl .5))
   (let* ((dur (lag.kr (lin-lin dur-ctl 0 1 .02 .31) .5))
 	 (window .02)
@@ -375,7 +366,6 @@
 	 (rate (lag.kr (lin-lin rate-ctl 0 1 .9 1.1) .5))
 	 (sig (play-buf.ar 1 buffer rate :trig loop-trig :start-pos start)))
     (out.ar *output-bus* (* sig env (env-gen.kr (asr 0 1 .1) :gate gate :act :free)))))
->>>>>>> Stashed changes
 
 (sc-osc:add-osc-responder
  *osc*
