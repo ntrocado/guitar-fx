@@ -2,8 +2,9 @@
 
 (defparameter *input-mic* 0)
 (defparameter *input-pre* 1)
-(defparameter *input-post* 6)
-(defparameter *output-bus* 4)
+(defparameter *input-post* 4
+  )
+(defparameter *output-bus* 2)
 
 (defparameter *nodes* (make-hash-table))
 
@@ -117,19 +118,25 @@
 
 ;;;;
 
+(defparameter *loop-recording-mode* nil)
+
+(defun panic ()
+  (setf *loop-recording-mode* nil)
+  (stop)
+  (setf *nodes* (make-hash-table))
+  (print "Stop")
+  (finish-output))
+
 (sc-osc:add-osc-responder
-   *osc*
-   "/STOP"
-   (lambda (&rest param)
-     (declare (ignore param))
-     (stop)
-     (setf *nodes* (make-hash-table))
-     (print "Stop")
-     (finish-output)))
+    *osc*
+    "/STOP"
+    (lambda (&rest param)
+      (declare (ignore param))
+      (panic)))
 
 ;;;;
 
-(defsynth feedback-fm ((amp .2))
+(defsynth feedback-fm ((amp 3.5))
   (let* ((control (in.kr *ctrl-bus*))
 	 (in-freq (first (tartini.kr (in.ar (getf *in-bus* :pre)))))
 	 (max-speed (range (lf-noise1.kr 1) 2 8))
@@ -162,24 +169,24 @@
 
 ;;;;
 
-(defsynth random-fm ((amp .7))
+(defsynth random-fm ((amp .85))
   (let ((input (in.ar (getf *in-bus* :pre))))
     (out.ar *output-bus*
-	    (pan2.ar (* (+ (sin-osc.ar (tartini.kr input) 0 .2)
-			   (sin-osc.ar (* (amplitude.kr input
-							:mul 2000
-							:add 1)
-					  (range (lf-noise0.kr 1)
-						 20 10000))
-				       0 .2))
-			(max 0 (- .15 (amplitude.kr input :mul 10)))
-			.35 amp)))))
+	    (pan2.ar (tanh (* (+ (sin-osc.ar (tartini.kr input) 0 .2)
+				 (sin-osc.ar (* (amplitude.kr input
+							      :mul 2000
+							      :add 1)
+						(range (lf-noise0.kr 1)
+						       20 10000))
+					     0 .2))
+			      (max 0 (- .15 (amplitude.kr input :mul 10)))
+			      10 amp))))))
 
 (make-toggle random-fm)
 
 ;;;;
 
-(defsynth onsets ((notes '(43 44 50 51 53 55 62 63 65 67 68 76 78)) (amp .7))
+(defsynth onsets ((notes '(43 44 50 51 53 55 62 63 65 67 68 76 78)) (amp 1))
   (let* ((in (in.ar (getf *in-bus* :pre)))
 	 (trig (coyote.kr in 0.2 0.2 0.01 0.8 0.05 0.1)))
     (out.ar *output-bus* (pan2.ar (leak-dc.ar
@@ -225,30 +232,83 @@
 (defparameter *loop-buf* (buffer-alloc (* (slot-value (server-options *s*) 'sc::hardware-samplerate)
 					  60)))
 
-(defsynth loop ((buf *loop-buf*) (rec 0))
+;; (defsynth loop ((buf *loop-buf*) (rec 0) (amp .7))
+;;   (let* ((in (in.ar (getf *in-bus* :post)))
+;; 	 (dur (sweep.ar rec (* (sample-rate.ir) rec)))
+;; 	 (ptr (phasor.ar rec 1 0 dur))
+;; 	 (play (* (- 1 (var-lag.kr rec 2))
+;; 		  (buf-rd.ar 1 buf (wrap.ar (* ptr (+ 1 (* .05 (in.kr *ctrl-bus*)
+;; 							   (lf-noise1.kr 2 .45 .5))))
+;; 					    0 dur)))))
+    
+;;     (buf-wr.ar (x-fade2.ar (* in
+;; 			      1	;; (env-gen.kr (linen .05) :gate rec)
+;; 			      )
+;; 			   play
+;; 			   (var-lag.kr (- 1 rec) .05))
+;; 	       buf ptr)
+;;     (out.ar *output-bus* (pan2.ar (leak-dc.ar (* play
+;; 						 (env-gen.kr (asr .01 1 .7)
+;; 							     :gate (- 1 (* (delay-1.kr (< dur (* (sample-rate.ir) .25))) (- 1 rec)))
+;; 							     :act :free)
+;; 						 amp))
+;; 				  (lf-saw.kr (range (in.kr *ctrl-bus*) .5 2))))))
+
+(defsynth loop ((buf *loop-buf*) (rec 0) (replace 0) (amp .85) (gate 1))
   (let* ((in (in.ar (getf *in-bus* :post)))
 	 (dur (sweep.ar rec (* (sample-rate.ir) rec)))
 	 (ptr (phasor.ar rec 1 0 dur))
-	 (play (* (- 1 (var-lag.kr rec .5))
-		  (buf-rd.ar 1 buf (wrap.ar (* ptr (+ 1 (* .05 (in.kr *ctrl-bus*)
-							   (lf-noise1.kr 2 .45 .5))))
-					    0 dur)))))
-    
-    (buf-wr.ar (x-fade2.ar (* in
-			      1	;; (env-gen.kr (linen .05) :gate rec)
-			      )
-			   play
-			   (var-lag.kr (- 1 (* 2 rec)) .03))
-	       buf ptr)
-    (out.ar *output-bus* (pan-az.ar 4
-				    (* play
-				       (env-gen.kr (asr .01 1 .7)
-						   :gate (- 1 (* (delay-1.kr (< dur (* (sample-rate.ir) .25))) (- 1 rec)))
-						   :act :free))
-				    (lf-saw.kr (range (in.kr *ctrl-bus*) 0.1 2))))))
-
+	 (play (buf-rd.ar 1 buf (wrap.ar (* ptr (+ 1 (* .05 (in.kr *ctrl-bus*)
+							(lf-noise1.kr 2 .45 .5))))
+					 0 dur)))
+	 (rec-pan (var-lag.kr (- 1 rec) .05))
+	 (write-normal (x-fade2.ar in play rec-pan))
+	 (replace-fade (var-lag.kr replace .005))
+	 (write-sig (x-fade2.ar write-normal in (- (* 2 replace-fade) 1)))
+	 (out-amp (* (- 1 replace-fade)
+		     (env-gen.ar (asr 0 1 1) :gate gate :act :free)
+		     amp)))
+    (buf-wr.ar write-sig buf ptr)
+    (out.ar *output-bus* (pan2.ar (leak-dc.ar (* play out-amp))
+				  (lf-saw.kr (range (in.kr *ctrl-bus*) .5 2))))))
 
 (defparameter *loop-node* nil)
+
+(defun loop-rec-start ()
+  (when (is-playing-p *loop-node*)
+    (ctrl *loop-node* :replace 0))
+  (setf *loop-recording-mode* nil)
+  (if (is-playing-p *loop-node*)
+      (ctrl *loop-node* :rec 1)
+      (setf *loop-node* (synth 'loop :rec 1))))
+
+(defun loop-rec-stop ()
+  (when (is-playing-p *loop-node*)
+    (ctrl *loop-node* :rec 0)))
+
+(defun loop-replace-start ()
+  (if (is-playing-p *loop-node*)
+      (progn
+	(ctrl *loop-node* :rec 0)
+	(setf *loop-recording-mode* :replace)
+	(ctrl *loop-node* :replace 1))
+      (progn
+	(setf *loop-recording-mode* :initial)
+	(setf *loop-node* (synth 'loop :rec 1)))))
+
+(defun loop-replace-stop ()
+  (when (is-playing-p *loop-node*)
+    (case *loop-recording-mode*
+      (:replace (ctrl *loop-node* :replace 0))
+      (:initial (ctrl *loop-node* :rec 0))))
+  (setf *loop-recording-mode* nil))
+
+(defun loop-clear ()
+  (setf *loop-recording-mode* nil)
+  (when (is-playing-p *loop-node*)
+    (ctrl *loop-node* :gate 0))
+  (sleep 1)
+  (buffer-zero *loop-buf*))
 
 (sc-osc:add-osc-responder
  *osc*
@@ -256,11 +316,20 @@
  (lambda (&rest param)
    (destructuring-bind (state) param
      (if (zerop state)
-	 (ctrl *loop-node* :rec 0)
-	 (if (is-playing-p *loop-node*)
-	     (ctrl *loop-node* :rec 1)
-	     (setf *loop-node* (synth 'loop :rec 1))))
+	 (loop-rec-stop)
+	 (loop-rec-start))
      (format t "Loop: ~a~%" state)
+     (finish-output))))
+
+(sc-osc:add-osc-responder
+ *osc*
+ "/LOOP-REPLACE"
+ (lambda (&rest param)
+   (destructuring-bind (state) param
+     (if (zerop state)
+	 (loop-replace-stop)
+	 (loop-replace-start))
+     (format t "Loop Replace: ~a~%" state)
      (finish-output))))
 
 
@@ -394,21 +463,21 @@
 	 (sig (apply #'freeverb2.ar (append (pan2.ar car pan)
 					    (list :mix reverb)))))
     (detect-silence.ar sig 1.0e-4 :act :free)
-    (out.ar *output-bus* sig)))
+    (out.ar *output-bus* sig))
 
-(sc-osc:add-osc-responder *osc* "/fm"
-    (lambda (&rest param)
-      (declare (ignore param))
-      (synth 'fm
-	     :freq (midicps 72)
-	     :m-ratio (rrand .95 80)
-	     :c-ratio (rrand 1.2 45)
-	     :index 1.2
-	     :i-scale (rrand 1.4 10)
-	     :amp (rrand .03 .09)
-	     :pan (rrand -.7 .7)
-	     :rel (exp-rrand .015 1.2)
-	     :reverb (rrand .1 .6))))
+  (sc-osc:add-osc-responder *osc* "/fm"
+      (lambda (&rest param)
+	(declare (ignore param))
+	(synth 'fm
+	       :freq (midicps 72)
+	       :m-ratio (rrand .95 80)
+	       :c-ratio (rrand 1.2 45)
+	       :index 1.2
+	       :i-scale (rrand 1.4 10)
+	       :amp (rrand .03 .09)
+	       :pan (rrand -.7 .7)
+	       :rel (exp-rrand .015 1.2)
+	       :reverb (rrand .1 .6)))))
 
 
 ;;; Mag noise
@@ -589,7 +658,7 @@
 
 (new-sound)
 
-(defsynth sin-follow ((amp .3))
+(defsynth sin-follow ((amp .75))
   (let* ((in-freq (first (tartini.kr (hpf.ar (in.ar (getf *in-bus* :pre))
 					     60))))
 	 (sig (leak-dc.ar (resonz.ar (mix  (osc.ar *sin-follow-buf*
@@ -611,7 +680,7 @@
    (declare (ignore param))
    (new-sound)))
 
-(defsynth vocal-bass ((amp 1))
+(defsynth vocal-bass ((amp 2.6))
   (let* ((in (in.ar (getf *in-bus* :pre)))
 	 (in-freq (/ (first (tartini.kr (hpf.ar (in.ar (getf *in-bus* :pre))
 						60)))
@@ -626,9 +695,8 @@
 			   .2)))
 	 (snd (+ (rlpf.ar snd '(200 230)) (hpf.ar (* snd (dbamp -15)) 3000)))
 	 (snd (tanh snd)))
-    (out.ar *output-bus* (compander.ar (* (env-follow.ar in)
-					  snd
-					  amp)))))
+    (out.ar *output-bus* (* amp (compander.ar (* (env-follow.ar in)
+						 snd))))))
 
 (make-toggle vocal-bass)
 
@@ -647,3 +715,69 @@
     (out.ar *output-bus* (splay.ar sig 1 amp))))
 
 (make-toggle crazy-pad)
+
+;;;
+
+(defparameter *glitch-buf* (buffer-alloc (* (slot-value (server-options *s*) 'sc::hardware-samplerate)
+					    .1)))
+
+(defsynth glitch-loop-rec ()
+  (record-buf.ar (in.ar (getf *in-bus* :post)) *glitch-buf*))
+
+(defsynth glitch-loop-rec ()
+  (let* ((buf *glitch-buf*)
+         (input (leak-dc.ar (in.ar (getf *in-bus* :post))))
+         (frames (buf-frames.ir buf))
+         
+         ;; 1. The Pointer
+         (phase (phasor.ar 0 (buf-rate-scale.ir buf) 0 frames))
+         
+         ;; 2. Window Calculation (The Fix)
+         ;; We define the fade length in frames (e.g., 5% of the buffer)
+         (fade-len (* frames 0.05))
+         
+         ;; Calculate distance from the Start (0) and End (frames)
+         (dist-from-start phase)
+         (dist-from-end (- frames phase))
+         
+         ;; Which edge is closer? 
+         ;; This gives us a triangle shape peaking at the center
+         (dist-from-edge (min dist-from-start dist-from-end))
+         
+         ;; Normalize this distance: 
+         ;; 0.0 = at the edge (silence)
+         ;; 1.0 = deeper inside the buffer than 'fade-len' (full volume)
+         (linear-shape (clip (/ dist-from-edge fade-len) 0.0 1.0))
+         
+         ;; 3. Apply Sine Curve
+         ;; Converting linear (0-1) to sine curve (0-1) for smoother sound
+         ;; sin(x * pi/2) creates a smooth rise and fall
+         (window (sin (* linear-shape 1.5707963))))
+
+    ;; Write to buffer
+    (buf-wr.ar (* input window) buf phase 1.0)))
+
+(defparameter *glitch-buf-node* (synth 'glitch-loop-rec))
+
+(defsynth glitch-loop-play ((gate 1) (speed .01) (amp 1))
+  (out.ar *output-bus*
+	  (* (env-gen.ar (asr 0.01 1 2) :gate gate :act :free)
+	     (splay.ar 
+	      (* (play-buf.ar 1 *glitch-buf* (list (floor (* (+ 1 speed) 3))
+						   (lin-lin.ar speed 0 1 1 1.02)
+						   1
+						   (floor (* (+ 1 speed) 6))
+						   (floor (* (+ 1 speed) 10)))
+			      :loop 1)
+		 (list 0.21 .8 1 0.17 0.11)))
+	     amp)))
+
+(defparameter *glitch-buf-play-node* nil)
+
+(defun glitch-loop-play-start ()
+  (free *glitch-buf-node*)
+  (setf *glitch-buf-play-node* (synth 'glitch-loop-play)))
+
+(defun glitch-loop-play-stop ()
+  (ctrl *glitch-buf-play-node* :gate 0)
+  (setf *glitch-buf-node* (synth 'glitch-loop-rec)))

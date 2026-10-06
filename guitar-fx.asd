@@ -4,7 +4,7 @@
   :license  "MIT"
   :version "1.0"
   :serial t
-  :depends-on (#:alexandria #:kdtree-jk #:cl-collider #:simple-inferiors)
+  :depends-on (#:alexandria #:kdtree-jk #:cl-collider #:simple-inferiors #:coremidi)
   ;; :depends-on (#:alexandria #:sc-vst #:kdtree-jk)
   :components ((:file "package")
 	       (:file "util")
@@ -14,4 +14,4 @@
 	       (:file "gui")
 	       ;; vst works, but for the moment I'd rather use the amp modeller as a standalone
 	       ;; (:file "vst")
-	       ))
+	       (:file "midi")))
